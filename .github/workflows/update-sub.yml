@@ -1,0 +1,37 @@
+name: Update V2Ray Subscription Every 4 Hours
+
+on:
+  schedule:
+    - cron: '17 */4 * * *'    # 每4小时第17分钟执行（避开整点拥堵）
+  workflow_dispatch:          # 支持手动触发
+  push:
+    branches: [ main ]
+
+jobs:
+  update-subscription:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install-deps chromium
+          playwright install chromium
+
+      - name: Run subscription script
+        run: python get_sub.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add subscription.txt
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update subscription $(date +'%Y-%m-%d %H:%M')" 
+          git push
