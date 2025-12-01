@@ -11,7 +11,7 @@ def main():
 
         # 打开页面
         page.goto("https://openproxylist.com/v2ray/")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_load_state('domcontentloaded', timeout=60000)  # 增加到 60s，并用更宽松状态
         print("页面加载完成")
 
         # 精准定位你提供的真实输入框：name="response"
@@ -22,7 +22,7 @@ def main():
         # 点击搜索
         page.click('button:has-text("Search")')
         print("正在搜索节点，请等待 12 秒确保表格完全加载...")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_load_state('domcontentloaded', timeout=120000)  # 增加到 60s，并用更宽松状态
         time.sleep(12)  # 必须等够！这是最关键的一步
 
         # 点击 V2Ray Subscription（弹出新窗口）
